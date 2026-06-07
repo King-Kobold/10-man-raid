@@ -1,11 +1,547 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vault — Character Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Uncial+Antiqua&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Uncial+Antiqua&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .scroll-wrap {
-    background: #1a1208;
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8cc80;
+    --gold-dim: #7a5e22;
+    --ember: #b84a1a;
+    --ember-light: #e06030;
+    --ink: #0d0b08;
+    --parchment: #1a1510;
+    --stone: #2a2420;
+    --stone-light: #3d3530;
+    --text-primary: #e8dfc8;
+    --text-secondary: #a89878;
+    --text-muted: #6b5c42;
+    --border: rgba(201,168,76,0.2);
+    --border-bright: rgba(201,168,76,0.5);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--text-primary);
+    font-family: 'Crimson Pro', Georgia, serif;
     min-height: 100vh;
-    padding: 2rem 1rem 3rem;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,168,76,0.015) 60px, rgba(201,168,76,0.015) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(201,168,76,0.01) 80px, rgba(201,168,76,0.01) 81px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  .site-header {
+    position: relative;
+    text-align: center;
+    padding: 5rem 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    z-index: 1;
+  }
+
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(184,74,26,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 0.9;
+    text-shadow: 0 0 60px rgba(201,168,76,0.3);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .header-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: 0.15em;
+    margin-bottom: 2rem;
+  }
+
+  .header-rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto 2rem;
+  }
+  .header-rule::before, .header-rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  }
+  .header-rule-gem { color: var(--gold); font-size: 0.6rem; }
+
+  .header-desc {
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  /* NAV TABS */
+  .tab-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,11,8,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0 2rem;
+  }
+
+  .tab-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 1.2rem 2rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: var(--text-secondary); }
+  .tab-btn.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* SECTION */
+  .section {
+    display: none;
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section.active { display: block; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 0.5rem 0;
+    margin-right: 0.5rem;
+    align-self: center;
+  }
+
+  .filter-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .filter-btn:hover { color: var(--text-secondary); border-color: var(--gold-dim); }
+  .filter-btn.active {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  /* GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--stone);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+    animation: cardReveal 0.4s ease both;
+  }
+
+  @keyframes cardReveal {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.1);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .card-title-block { flex: 1; min-width: 0; }
+
+  .card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid rgba(107,92,66,0.4);
+    padding: 0.15rem 0.45rem;
+    border-radius: 1px;
+  }
+
+  .card-body {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .card-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-tip {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted);
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .card-tip strong {
+    font-style: normal;
+    color: var(--gold-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .card-footer {
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .card-expand-btn {
+    width: 100%;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .card-expand-btn:hover {
+    color: var(--gold);
+    border-color: var(--gold-dim);
+    background: rgba(201,168,76,0.05);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--stone);
+    border: 1px solid var(--border-bright);
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalIn 0.3s ease;
+    box-shadow: 0 0 0 1px rgba(201,168,76,0.1), 0 40px 80px rgba(0,0,0,0.8);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.96) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+    font-family: serif;
+  }
+  .modal-close:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+  .modal-hero {
+    padding: 2.5rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(201,168,76,0.05) 0%, transparent 100%);
+  }
+
+  .modal-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-name {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 0 30px rgba(201,168,76,0.2);
+  }
+
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+
+  .modal-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 0.25rem 0.6rem;
+    border-radius: 1px;
+    background: rgba(201,168,76,0.05);
+  }
+
+  .modal-tip {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    border-left: 2px solid var(--gold);
+    padding-left: 1rem;
+    line-height: 1.7;
+  }
+
+  .modal-body {
+    padding: 2rem 2.5rem;
+  }
+
+  .modal-lore {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+  }
+
+  .modal-lore p { margin-bottom: 1rem; }
+  .modal-lore p:last-child { margin-bottom: 0; }
+
+  .modal-subclasses-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .subclass-list { display: flex; flex-direction: column; gap: 1rem; }
+
+  .subclass-item {
+    padding: 1.2rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--ember);
+    transition: border-left-color 0.2s;
+  }
+  .subclass-item:hover { border-left-color: var(--gold); }
+
+  .subclass-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .subclass-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* HIDDEN */
+  .card.hidden { display: none; }
+
+  /* SCROLL */
+  .modal::-webkit-scrollbar { width: 4px; }
+  .modal::-webkit-scrollbar-track { background: var(--ink); }
+  .modal::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .tab-btn { padding: 1rem 1rem; font-size: 0.65rem; letter-spacing: 0.1em; }
+    .modal { max-height: 95vh; }
+    .modal-hero, .modal-body { padding: 1.5rem; }
+    .modal-name { font-size: 1.6rem; }
+    .section { padding: 2rem 1rem 4rem; }
+  }
+
+  /* ============================================================
+     PROCLAMATION TAB — Izkon's Recorded Declaration (parchment)
+     ============================================================ */
+  .scroll-wrap {
+    background: transparent;
+    padding: 1rem 0 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -224,117 +760,547 @@
     opacity: 0.85;
   }
 
-  .stamp-text {
-    font-family: 'IM Fell English SC', serif;
-    font-size: 9.5px;
-    letter-spacing: 0.12em;
-    fill: #7a3d00;
+  @media (max-width: 600px) {
+    .parchment { padding: 2rem 1.5rem; }
+    .dragon-name { font-size: 22px; }
+    .decree-block { font-size: 15px; }
   }
 </style>
+</head>
+<body>
 
-<div class="scroll-wrap">
-  <div class="parchment">
+<header class="site-header">
+  <p class="header-eyebrow">Adventurers' Guild of Aurelia &nbsp;✦&nbsp; Character Reference</p>
+  <h1 class="header-title">The Vault</h1>
+  <p class="header-subtitle">Who Will You Be?</p>
+  <div class="header-rule"><span class="header-rule-gem">⬧</span></div>
+  <p class="header-desc">Choose your class. Choose your lineage. Descend into the unknown. What awaits below has endured for centuries — the only question is whether you will.</p>
+</header>
 
-    <div class="corner corner-tl">
-      <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
-    </div>
-    <div class="corner corner-tr">
-      <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
-    </div>
-    <div class="corner corner-bl">
-      <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
-    </div>
-    <div class="corner corner-br">
-      <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
-    </div>
+<nav class="tab-nav" role="tablist">
+  <button class="tab-btn active" data-tab="proclamation" role="tab">The Proclamation</button>
+  <button class="tab-btn" data-tab="classes" role="tab">Classes</button>
+  <button class="tab-btn" data-tab="races" role="tab">Lineages</button>
+</nav>
 
-    <div class="guild-header">
-      <p class="guild-label">Adventurers' Guild of Aurelia &nbsp;✦&nbsp; Official Notice</p>
-      <p class="guild-title">A Recorded Declaration</p>
-    </div>
+<!-- PROCLAMATION SECTION -->
+<section class="section active" id="tab-proclamation">
+  <div class="scroll-wrap">
+    <div class="parchment">
 
-    <p class="preamble">
-      The following words were spoken aloud above the Grand Plaza of Aurelia on the forty-third day of the Month of Embers, in the year 1,203 of the Third Reckoning at the moment the Vault's first stones broke the surface of the earth. They were recorded in full by no fewer than seven scribes of the Guild, two priests of Oghma, and one very surprised pastry merchant. Their accuracy is not in dispute.
-    </p>
-
-    <div class="divider"><div class="divider-line"></div><span class="divider-gem">⬧</span><div class="divider-line"></div></div>
-
-    <p class="dragon-name">Izkon the Golden</p>
-    <p class="dragon-epithet">Ancient Gold Greatwyrm — Sovereign of the Sunken Hoard — He Who Waited</p>
-
-    <div class="proclamation-quote decree-block">
-      <span class="decree-line">&ldquo;People of Aurelia.</span>
-      <span class="decree-line heavy">Hear my words.</span>
-
-      <span class="decree-line" style="margin-top:0.8rem;">Long ago, before your grandparents' grandparents drew first breath, a vast portion of my hoard was taken from me. Not by force. By <em>cunning</em>. Hidden in a place no dragon's eye could find, behind wards older than your oldest kings.</span>
-
-      <span class="decree-line" style="margin-top:0.8rem;">For centuries I searched. For centuries I failed. I have burned libraries seeking answers. I have questioned sages who did not survive the questioning. I have flown over every corner of this world and found nothing.</span>
-
-      <span class="decree-line heavy" style="margin-top:1rem;">Until now.</span>
-
-      <span class="decree-line" style="margin-top:0.8rem;">Beneath your city, beneath the very stones upon which you stand, rests an ancient vault. Concealed by powers that predate your civilisation. Hidden specifically from the eyes of my kind. I cannot enter it. The magic forbids me. My fire cannot melt its gates. My claws cannot breach its walls. Every inch of it was built to keep <em>me</em> out.</span>
-
-      <span class="decree-line" style="margin-top:0.8rem;">But you can enter.</span>
-      <span class="decree-line">You small, soft, mortal things.</span>
-      <span class="decree-line">You can walk right in.</span>
-    </div>
-
-    <div class="section-break"><span class="section-break-inner">The Challenge</span></div>
-
-    <div class="decree-block" style="text-align:center; font-family:'IM Fell English', serif; font-size:14px; color:#4a3010; margin-bottom:1rem;">
-      <em>Therefore, I issue this challenge to the peoples of the world: <br>to adventurers, mercenaries, scholars, hunters, heroes, and fools.<br>To anyone who breathes and hungers and dares.</em>
-    </div>
-
-    <div class="decree-block" style="font-family:'IM Fell English',serif; font-size:16px; color:#2a1a05;">
-      <span class="decree-line command">— Descend into the Vault.</span>
-      <span class="decree-line command">— Find what was stolen from me.</span>
-      <span class="decree-line command">— Find and slay the one who stole it.</span>
-      <span class="decree-line command">— Bring me proof of both.</span>
-    </div>
-
-    <div class="rewards-block">
-      <strong style="font-family:'IM Fell English SC', serif; font-size:12px; letter-spacing:0.1em; color:#5c3000;">In return, I shall grant from my own hoard:</strong><br>
-      Gold beyond what your banks can hold. Relics older than your nations. Knowledge your scholars would commit crimes to possess. Favours from a creature who has watched empires rise and fall, and who does not forget his debts.
-      <br><br>
-      <em>Name what lies within my power. I will not refuse those who succeed.</em>
-    </div>
-
-    <div class="section-break"><span class="section-break-inner">What Awaits</span></div>
-
-    <div class="fate-verse">
-      Many will enter.<br>
-      Many will fail.<br>
-      Some will find glory.<br>
-      <strong style="color:#8b1a00;">Most will be forgotten.</strong><br><br>
-    </div>
-
-    <p class="final-call">The Worthy may Descend.</p>
-
-    <div class="divider" style="margin:1.2rem 0 0;"><div class="divider-line"></div><span class="divider-gem">⬧</span><div class="divider-line"></div></div>
-
-    <div class="guild-update">
-      <p><strong style="font-family:'IM Fell English SC',serif; font-size:12px; letter-spacing:0.1em;">Guild Addendum — Current Status of the Vault</strong></p>
-      <p>Since the declaration above, Aurelia has become the greatest adventuring hub in the known world. Guild chapters from every major nation have established permanent presence within the city. Expeditions descend daily. The inns are full. The healers are busy. The coffin-makers are busier.</p>
-      <p>Four months of exploration have passed. No expedition has returned from the Vault's deepest reaches. Several have not returned at all.</p>
-      <p>What awaits below remains unknown.</p>
-      <span class="update-warning">✦ Registration for new expeditions remains open. ✦</span>
-    </div>
-
-    <div class="sig-block">
-      <div class="sig-left">
-        Witnessed &amp; Recorded<br>
-        <em>Adventurers' Guild of Aurelia</em><br>
-        Month of Embers, Year 1,203
+      <div class="corner corner-tl">
+        <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
       </div>
-      <svg class="seal" viewBox="0 0 72 72">
-        <circle cx="36" cy="36" r="34" fill="#f4e4b8" stroke="#8b6a28" stroke-width="1.5"/>
-        <circle cx="36" cy="36" r="28" fill="none" stroke="#8b6a28" stroke-width="0.5" stroke-dasharray="3,2"/>
-        <polygon points="36,10 40,27 57,27 43,37 48,54 36,44 24,54 29,37 15,27 32,27" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
-        <text x="36" y="39" text-anchor="middle" font-family="serif" font-size="9" fill="#7a3d00" font-style="italic">AURELIA</text>
-        <path id="sealArc" d="M 10 36 A 26 26 0 0 1 62 36" fill="none"/>
-        <text><textPath href="#sealArc" startOffset="12%"><tspan font-family="serif" font-size="6.5" fill="#8b6a28" letter-spacing="2">ADVENTURERS' GUILD ✦ REGISTERED NOTICE</tspan></textPath></text>
-      </svg>
-    </div>
+      <div class="corner corner-tr">
+        <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
+      </div>
+      <div class="corner corner-bl">
+        <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
+      </div>
+      <div class="corner corner-br">
+        <svg viewBox="0 0 48 48"><path d="M4 44 L4 4 L44 4" stroke="#8b6a28" stroke-width="2" fill="none"/><circle cx="4" cy="4" r="4" fill="#8b6a28"/><path d="M12 4 Q12 12 4 12" stroke="#c9a84c" stroke-width="1" fill="none"/><path d="M20 4 Q20 20 4 20" stroke="#c9a84c" stroke-width="0.8" fill="none" stroke-dasharray="2,3"/></svg>
+      </div>
 
+      <div class="guild-header">
+        <p class="guild-label">Adventurers' Guild of Aurelia &nbsp;✦&nbsp; Official Notice</p>
+        <p class="guild-title">A Recorded Declaration</p>
+      </div>
+
+      <p class="preamble">
+        The following words were spoken aloud above the Grand Plaza of Aurelia on the forty-third day of the Month of Embers, in the year 1,203 of the Third Reckoning at the moment the Vault's first stones broke the surface of the earth. They were recorded in full by no fewer than seven scribes of the Guild, two priests of Oghma, and one very surprised pastry merchant. Their accuracy is not in dispute.
+      </p>
+
+      <div class="divider"><div class="divider-line"></div><span class="divider-gem">⬧</span><div class="divider-line"></div></div>
+
+      <p class="dragon-name">Izkon the Golden</p>
+      <p class="dragon-epithet">Ancient Gold Greatwyrm — Sovereign of the Sunken Hoard — He Who Waited</p>
+
+      <div class="proclamation-quote decree-block">
+        <span class="decree-line">&ldquo;People of Aurelia.</span>
+        <span class="decree-line heavy">Hear my words.</span>
+
+        <span class="decree-line" style="margin-top:0.8rem;">Long ago, before your grandparents' grandparents drew first breath, a vast portion of my hoard was taken from me. Not by force. By <em>cunning</em>. Hidden in a place no dragon's eye could find, behind wards older than your oldest kings.</span>
+
+        <span class="decree-line" style="margin-top:0.8rem;">For centuries I searched. For centuries I failed. I have burned libraries seeking answers. I have questioned sages who did not survive the questioning. I have flown over every corner of this world and found nothing.</span>
+
+        <span class="decree-line heavy" style="margin-top:1rem;">Until now.</span>
+
+        <span class="decree-line" style="margin-top:0.8rem;">Beneath your city, beneath the very stones upon which you stand, rests an ancient vault. Concealed by powers that predate your civilisation. Hidden specifically from the eyes of my kind. I cannot enter it. The magic forbids me. My fire cannot melt its gates. My claws cannot breach its walls. Every inch of it was built to keep <em>me</em> out.</span>
+
+        <span class="decree-line" style="margin-top:0.8rem;">But you can enter.</span>
+        <span class="decree-line">You small, soft, mortal things.</span>
+        <span class="decree-line">You can walk right in.</span>
+      </div>
+
+      <div class="section-break"><span class="section-break-inner">The Challenge</span></div>
+
+      <div class="decree-block" style="text-align:center; font-family:'IM Fell English', serif; font-size:14px; color:#4a3010; margin-bottom:1rem;">
+        <em>Therefore, I issue this challenge to the peoples of the world: <br>to adventurers, mercenaries, scholars, hunters, heroes, and fools.<br>To anyone who breathes and hungers and dares.</em>
+      </div>
+
+      <div class="decree-block" style="font-family:'IM Fell English',serif; font-size:16px; color:#2a1a05;">
+        <span class="decree-line command">— Descend into the Vault.</span>
+        <span class="decree-line command">— Find what was stolen from me.</span>
+        <span class="decree-line command">— Find and slay the one who stole it.</span>
+        <span class="decree-line command">— Bring me proof of both.</span>
+      </div>
+
+      <div class="rewards-block">
+        <strong style="font-family:'IM Fell English SC', serif; font-size:12px; letter-spacing:0.1em; color:#5c3000;">In return, I shall grant from my own hoard:</strong><br>
+        Gold beyond what your banks can hold. Relics older than your nations. Knowledge your scholars would commit crimes to possess. Favours from a creature who has watched empires rise and fall, and who does not forget his debts.
+        <br><br>
+        <em>Name what lies within my power. I will not refuse those who succeed.</em>
+      </div>
+
+      <div class="section-break"><span class="section-break-inner">What Awaits</span></div>
+
+      <div class="fate-verse">
+        Many will enter.<br>
+        Many will fail.<br>
+        Some will find glory.<br>
+        <strong style="color:#8b1a00;">Most will be forgotten.</strong><br><br>
+      </div>
+
+      <p class="final-call">The Worthy may Descend.</p>
+
+      <div class="divider" style="margin:1.2rem 0 0;"><div class="divider-line"></div><span class="divider-gem">⬧</span><div class="divider-line"></div></div>
+
+      <div class="guild-update">
+        <p><strong style="font-family:'IM Fell English SC',serif; font-size:12px; letter-spacing:0.1em;">Guild Addendum — Current Status of the Vault</strong></p>
+        <p>Since the declaration above, Aurelia has become the greatest adventuring hub in the known world. Guild chapters from every major nation have established permanent presence within the city. Expeditions descend daily. The inns are full. The healers are busy. The coffin-makers are busier.</p>
+        <p>Four months of exploration have passed. No expedition has returned from the Vault's deepest reaches. Several have not returned at all.</p>
+        <p>What awaits below remains unknown.</p>
+        <span class="update-warning">✦ Registration for new expeditions remains open. ✦</span>
+      </div>
+
+      <div class="sig-block">
+        <div class="sig-left">
+          Witnessed &amp; Recorded<br>
+          <em>Adventurers' Guild of Aurelia</em><br>
+          Month of Embers, Year 1,203
+        </div>
+        <svg class="seal" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="34" fill="#f4e4b8" stroke="#8b6a28" stroke-width="1.5"/>
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#8b6a28" stroke-width="0.5" stroke-dasharray="3,2"/>
+          <polygon points="36,10 40,27 57,27 43,37 48,54 36,44 24,54 29,37 15,27 32,27" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+          <text x="36" y="39" text-anchor="middle" font-family="serif" font-size="9" fill="#7a3d00" font-style="italic">AURELIA</text>
+          <path id="sealArc" d="M 10 36 A 26 26 0 0 1 62 36" fill="none"/>
+          <text><textPath href="#sealArc" startOffset="12%"><tspan font-family="serif" font-size="6.5" fill="#8b6a28" letter-spacing="2">ADVENTURERS' GUILD ✦ REGISTERED NOTICE</tspan></textPath></text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CLASSES SECTION -->
+<section class="section" id="tab-classes">
+  <p class="section-title">12 Classes &nbsp;·&nbsp; 36 Subclasses</p>
+  <div class="card-grid" id="class-grid"></div>
+</section>
+
+<!-- RACES SECTION -->
+<section class="section" id="tab-races">
+  <p class="section-title">18 Lineages</p>
+  <div class="card-grid" id="race-grid"></div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <div class="modal-hero">
+      <p class="modal-eyebrow" id="modal-type"></p>
+      <h2 class="modal-name" id="modal-name"></h2>
+      <div class="modal-tags" id="modal-tags"></div>
+      <p class="modal-tip" id="modal-tip"></p>
+    </div>
+    <div class="modal-body">
+      <div class="modal-lore" id="modal-lore"></div>
+      <div id="modal-subclasses-section">
+        <p class="modal-subclasses-title" id="modal-sub-label"></p>
+        <div class="subclass-list" id="modal-subclasses"></div>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+const CLASSES = [
+  {
+    name: "Barbarian", icon: "🪓", tags: ["Rage","Unstoppable","Primal","Tough"], filters: ["martial"],
+    tip: "Best for players who want to be the wrecking ball. Low setup, high impact, hard to kill.",
+    lore: [
+      "Barbarians don't fight like other people. They get hit, they get angry, and then they get dangerous. The rage isn't just emotion — it's something physical, something that makes them faster and harder and more difficult to kill than any amount of armor would. A barbarian mid-fight is a different creature than the person you met at the tavern.",
+      "They're not mindless. Most barbarians are deeply connected to something — a tribe, a spirit, a cause, a god — and that connection is where the rage comes from. It's not random violence. It's conviction with its volume turned all the way up.",
+      "If you want to run into things, hit them very hard, and survive situations that should have ended you, this is your class. Barbarians are also surprisingly fun outside of combat because the question of what happens when a very intense person has to navigate polite society rarely gets old."
+    ],
+    subLabel: "Paths",
+    subclasses: [
+      { name: "Path of Wild Magic", desc: "Your rage tears holes in the fabric of reality. Random magical effects erupt around you when you fight — teleportation, spectral hands, bursts of light, things that nobody planned for. Chaotic in a way that's genuinely fun and occasionally terrifying for everyone nearby." },
+      { name: "Path of the Totem Warrior", desc: "You bond with an animal spirit — bear, wolf, eagle — and carry its power into battle. The most 'classic barbarian' option. Strong, reliable abilities and a clear identity. The bear totem is famous for being almost impossible to kill." },
+      { name: "Path of the Zealot", desc: "Your rage is religious. A god fuels it, and in return you fight with divine fire and a supernatural refusal to die. Zealots are the barbarian option for people who want their violence to mean something. Also, you can be brought back from the dead for free." }
+    ]
+  },
+  {
+    name: "Bard", icon: "🎵", tags: ["Charisma","Support","Versatile","Performer"], filters: ["support","caster"],
+    tip: "Great for players who want to be involved in everything. Strong in social situations, useful in combat, essential in a tricky party.",
+    lore: [
+      "Bards are the charisma class. They talk, they perform, they inspire, they manipulate, and somehow they also do magic, fight decently, and know a little bit about everything. The source of their power is art itself — music, poetry, storytelling — and they've figured out that art, at the right moment, can do things that swords can't.",
+      "They're the glue of a party. When the fighter is about to punch the duke, the bard has already started a conversation that makes the duke feel good about himself. When the wizard runs out of spells, the bard still has options.",
+      "The reputation for being joke characters is completely undeserved. A well-played bard is genuinely scary."
+    ],
+    subLabel: "Colleges",
+    subclasses: [
+      { name: "College of Lore", desc: "You collected knowledge everywhere you went and use it as a weapon. You know obscure things, you can magically undercut an enemy's confidence mid-fight, and you get access to spells from other classes. The bard for players who want to be the smartest person in the room." },
+      { name: "College of Valor", desc: "You're a warrior-poet. You fight up front, inspire allies in the thick of combat, and your magic is deployed in the middle of a battlefield rather than from the back row. Good if you want to play a bard who's genuinely in the fight." },
+      { name: "College of Glamour", desc: "Your performance is laced with fey magic. People become charmed, dazzled, and intensely devoted to you without quite understanding why. The magic here feels less like tricks and more like influence." }
+    ]
+  },
+  {
+    name: "Cleric", icon: "✝", tags: ["Divine","Healer","Versatile","Devoted"], filters: ["support","caster"],
+    tip: "Works for almost any playstyle depending on the domain. Genuinely one of the most powerful classes in the game.",
+    lore: [
+      "Clerics are not just healers. That's the reputation and it undersells them badly. They're divine warriors who channel the direct power of a god, and depending on which god, that power looks completely different. A cleric of a war god and a cleric of a trickster god are playing almost different games.",
+      "They can heal, yes. They can also wade into melee combat, burn enemies with holy fire, control the battlefield with divine magic, and raise the dead. The healing gets noticed because it's useful and visible, but the best clerics are the ones who treat healing as one tool among many.",
+      "The real core of playing a cleric is the relationship with your deity. You're not just a person who prays — you're someone your god chose. That's a lot of weight."
+    ],
+    subLabel: "Domains",
+    subclasses: [
+      { name: "Life Domain", desc: "The healer domain. Your healing is bigger, more reliable, and more efficient than anyone else's. You're the reason the party doesn't die when things go badly. Being the reason everyone survived is its own kind of power." },
+      { name: "Tempest Domain", desc: "Your god is a storm god and you fight like one. Lightning, thunder, controlling weather, and hitting things very hard with divine power. Tempest clerics are the aggressive option — in melee, loud, and enemies do not want to be near them when the lightning starts." },
+      { name: "Light Domain", desc: "Fire, radiance, and the burning away of darkness. Light clerics are damage dealers who happen to also heal. The radiant fire you throw around is effective against undead and just generally looks excellent." }
+    ]
+  },
+  {
+    name: "Druid", icon: "🌿", tags: ["Nature","Shapeshifter","Spellcaster","Wise"], filters: ["caster","hybrid"],
+    tip: "Flexible and powerful with a high skill ceiling. Rewarding if you like having lots of options.",
+    lore: [
+      "Druids draw their power from nature itself — not a god of nature, just nature, the living system of the world. This gives them a perspective other spellcasters don't have. They're not wielding magic so much as asking the world to do things, and the world usually says yes.",
+      "They shape-shift into animals, control weather, grow plants into walls, call lightning, and talk to things that don't usually talk back. The spell list is enormous and weird in the best way.",
+      "Druids tend to feel more connected to the world than other classes. There's usually a value system there, a sense of balance and cycles, that gives them a distinctive personality even before you add subclass."
+    ],
+    subLabel: "Circles",
+    subclasses: [
+      { name: "Circle of the Moon", desc: "Your wild shape is a weapon. You turn into things that can actually fight — dire wolves, giant eagles, elementals — and hold the front line while your druid magic handles everything else. The option for players who want to be in the action physically." },
+      { name: "Circle of the Land", desc: "You're a scholar of a specific terrain and draw extra spells and power from it. The pure spellcaster druid, focused on having more spells and keeping them available longer. Good if you want to be a classic nature mage." },
+      { name: "Circle of Spores", desc: "The fungi druid. You animate the dead with spores, coat yourself in a damaging cloud, and lean into the idea that decay and rot are part of nature too. Distinctive look, creepy energy, mechanically strong." }
+    ]
+  },
+  {
+    name: "Fighter", icon: "⚔", tags: ["Martial","Reliable","Tough","Expert"], filters: ["martial"],
+    tip: "Consistently strong in combat. Good for new players wanting to learn the game without managing complex resources.",
+    lore: [
+      "Fighters are experts at combat. Not magic, not trickery, not divine favor — just the studied mastery of how to fight and win. They hit more often, hit harder, take more punishment, and keep going after anyone else would be done.",
+      "They get more attacks than almost anyone. They get more Action Surges. They're durable and consistent in a way that flashier classes aren't. In a long fight, the fighter is often the last one standing.",
+      "The class has a reputation for being simple, and the base version can be. But fighters have tremendous room for character — a tactician, a mercenary, a disgraced noble, a soldier still haunted by a war. The class doesn't tell you who you are. You do that part."
+    ],
+    subLabel: "Archetypes",
+    subclasses: [
+      { name: "Echo Knight", desc: "You summon an echo of yourself from a parallel timeline — a ghostly duplicate that fights alongside you, can swap places with you, and lets you strike from impossible angles. One of the most creative subclasses in the game." },
+      { name: "Battle Master", desc: "You fight with precision and tactics. Disarming opponents, tripping them, riposting, feinting — you have a toolkit of maneuvers that give you control over how fights play out. The strategic fighter option." },
+      { name: "Eldritch Knight", desc: "You learned magic too. Not a lot, but enough — defensive spells, a weapon you can summon to your hand, eventually some offensive magic. The combination of fighter durability with magic utility is powerful and flexible." }
+    ]
+  },
+  {
+    name: "Monk", icon: "👊", tags: ["Fast","Precise","Disciplined","Unarmed"], filters: ["martial","hybrid"],
+    tip: "High mobility, resource management, good payoff. Slightly more complex to play well but very fun once it clicks.",
+    lore: [
+      "Monks hit things with their hands, very quickly, using a personal energy called ki that they've cultivated through discipline and training. They're the fastest class in the game, can deflect arrows, run across water, catch projectiles, and eventually resist magic with sheer mental fortitude.",
+      "They play differently than fighters — fewer hits, but each one does something. Trip, stun, push, exhaust. A monk isn't just hitting you, they're controlling what you can do. When a monk stuns someone, that target loses their entire next turn. That's decisive in a fight.",
+      "The personality space for monks is wide. Strict and disciplined, chaotic and irreverent, spiritual and contemplative, or just a person who trained a lot."
+    ],
+    subLabel: "Traditions",
+    subclasses: [
+      { name: "Way of the Open Hand", desc: "The straightforward monk. You punch people and your punches do extra things — push them back, knock them prone, prevent them from reacting. Clean, effective, and thematically perfect if you want to be a classic martial arts master." },
+      { name: "Way of Shadow", desc: "You fight from the darkness. Teleport between shadows, silence a room, become invisible in dim light. The ninja option — mobile, stealthy, and full of tricks that make you hard to pin down." },
+      { name: "Way of the Four Elements", desc: "You channel elemental power through your ki — throwing fire, redirecting lightning, walking on water. The flashiest monk option. It costs resources aggressively, but the moments it produces are memorable." }
+    ]
+  },
+  {
+    name: "Paladin", icon: "🛡", tags: ["Holy Warrior","Oath-bound","Leader","Smite"], filters: ["martial","support"],
+    tip: "Durable, powerful, and great for players who want their character's values to show up in gameplay.",
+    lore: [
+      "Paladins are powered by belief. Whatever they've sworn to — an oath of justice, vengeance, protection, glory — becomes the source of their magic. They're heavy warriors who also heal, also smite with divine energy, also radiate an aura that protects the people around them.",
+      "The signature move is the Divine Smite: you hit something, and then you burn a spell slot to detonate a burst of radiant energy into it. Against undead and demons it's enormous. Paladins can end encounters quickly when the smites land right.",
+      "The interesting thing about paladins is that the oath matters. You've promised something. That promise is a built-in character engine. What happens when following your oath becomes complicated? That's where paladin stories get good."
+    ],
+    subLabel: "Oaths",
+    subclasses: [
+      { name: "Oath of Devotion", desc: "The classic paladin. You're a champion of good, honest, and dedicated to protecting the innocent. Your magic is radiant, your aura is protective, and you fight undead especially well. If someone says 'paladin' and you picture a knight in shining armor, this is it." },
+      { name: "Oath of Vengeance", desc: "You swore to hunt something down. The oath gives you tools to pursue and destroy your target — relentless, predatory, focused. Vengeance paladins are damage dealers first and everything else second. Good if you want your paladin to be scary." },
+      { name: "Oath of Glory", desc: "You're building a legend. You seek grand deeds and inspire others to reach for more than they thought possible. The magic focuses on enhancing your allies and performing feats that get remembered." }
+    ]
+  },
+  {
+    name: "Ranger", icon: "🏹", tags: ["Hunter","Tracker","Dual Wield","Survival"], filters: ["martial","hybrid"],
+    tip: "Good damage, useful utility, satisfying when you're in your element. The specialization aspect makes for natural backstory hooks.",
+    lore: [
+      "Rangers are hunters and trackers who've made the wild their home. They know terrain, they know monsters, they know how to move without being seen and how to find things that don't want to be found. In the right environment, against the right enemy, a ranger is one of the most effective people in the party.",
+      "They're a hybrid class — martial skill and nature magic together. The spells aren't as powerful as a full caster's, but the combination gives them options other martials don't have. Hunter's Mark, in particular, is one of the most consistently useful abilities in the game.",
+      "Rangers often have a specific grudge built into them — a favored enemy, a terrain they know better than anyone. That specialization creates character."
+    ],
+    subLabel: "Conclaves",
+    subclasses: [
+      { name: "Hunter", desc: "You're built to kill specific things efficiently. Hordes of smaller enemies, a single huge creature, creatures that run — Hunter gives you tools for each scenario. The straightforward ranger option, focused on combat effectiveness." },
+      { name: "Gloom Stalker", desc: "You hunt in the dark. You're invisible to creatures that use darkvision, you move faster on your first turn, you strike before anyone else in a fight. Gloom Stalkers are ambush predators. The first round of combat, they're terrifying." },
+      { name: "Swarmkeeper", desc: "A swarm of creatures lives with you — insects, birds, fey spirits — and helps you fight. You can move enemies around the battlefield with the swarm, deal extra damage, and reposition yourself. Unusual and creative." }
+    ]
+  },
+  {
+    name: "Rogue", icon: "🗡", tags: ["Sneaky","Striker","Skilled","Cunning"], filters: ["martial"],
+    tip: "High single-target damage, excellent skills, satisfying to play if you like precision and positioning.",
+    lore: [
+      "Rogues are opportunists. They don't charge in swinging — they find the right moment, the exposed flank, the distracted guard, the unguarded back, and they hit it once with everything they have. Sneak Attack is massive damage in a single strike when the conditions are right.",
+      "Outside of combat they're often the most capable person in the party. Skills, tools, languages — rogues get more of everything, and they get expertise in the things they care about most. Picking locks, reading people, moving silently, knowing which questions to ask.",
+      "Rogues also have Uncanny Dodge and Evasion — ways to take less damage or no damage from things that should hurt. They're not tanky, but they're slippery. They have a way of not being where the bad thing is when it lands."
+    ],
+    subLabel: "Archetypes",
+    subclasses: [
+      { name: "Soulknife", desc: "You manifest blades of psychic energy from your mind. No weapons needed, no equipment to lose. You can also read surface thoughts, speak telepathically, and your strikes interfere with concentration. The rogue option that feels the most superhuman." },
+      { name: "Assassin", desc: "You specialize in the first strike. If you attack before anyone knows a fight has started, the damage is absurd. You're also very good at impersonation and infiltration — creating identities, getting into places." },
+      { name: "Arcane Trickster", desc: "You learned magic too, focused on illusion and enchantment — tricks, distractions, invisibility, making people forget you were there. The magic doesn't make you a spellcaster, but it gives your rogue work a distinctly supernatural flair." }
+    ]
+  },
+  {
+    name: "Sorcerer", icon: "✨", tags: ["Innate Magic","Flexible","Powerful","Raw"], filters: ["caster"],
+    tip: "High damage, flexible spell use, good for players who want to feel like the magic IS them rather than something they learned.",
+    lore: [
+      "Sorcerers didn't study magic. They didn't earn it through devotion or strike a deal for it. It's in them, in their blood, for reasons that may or may not be their fault. The upside is that this raw magic is extraordinarily flexible — they can reshape and modify spells in ways other casters can't.",
+      "The downside is they know fewer spells than wizards. They have to be decisive about which spells they learn because they can't swap them out easily. This forces a kind of identity — a sorcerer knows who they are magically because they've had to choose.",
+      "The fun of playing a sorcerer is the power fantasy. The magic doesn't feel academic or procedural — it feels like it's coming from you, personally. When you blow something up with a maximized fireball, that was yours."
+    ],
+    subLabel: "Origins",
+    subclasses: [
+      { name: "Draconic Bloodline", desc: "A dragon is in your lineage and it shows. You get physical resilience, your spells of a particular element hit harder, and eventually you can grow wings. More durable, more powerful with a specific element, clearly tied to something ancient and huge." },
+      { name: "Wild Magic", desc: "Your magic is unstable. After you cast spells, random effects might happen — good, bad, spectacular, bizarre. You can try to trigger these surges deliberately for bonuses, or just accept that your sorcerer is a controlled disaster." },
+      { name: "Aberrant Mind", desc: "Something from beyond reality touched your lineage. Your magic is psychic and strange. You get telepathy, spells that warp perception and control minds, and there's always a faint wrongness to how you do things." }
+    ]
+  },
+  {
+    name: "Warlock", icon: "🕯", tags: ["Pact Magic","Patron","Eldritch","Dark"], filters: ["caster","hybrid"],
+    tip: "Consistent damage, lots of short rests, strong roleplay hooks. Good for players who want their character's backstory baked into the mechanics.",
+    lore: [
+      "Warlocks made a deal with something powerful — a fiend, an alien god, a celestial, an ancient entity that doesn't quite exist in the normal sense — and in exchange they got power. The patron wants something from them in return.",
+      "Mechanically, warlocks work differently from other casters. They have fewer spell slots but they come back on a short rest, not a long one. This means a warlock is casting their strongest spells repeatedly through a day.",
+      "The patron relationship is the thing that makes warlocks interesting as characters. You didn't stumble into power — you chose it, for some reason. What was the reason? What did it cost you? What does your patron want? There's always a story underneath a warlock."
+    ],
+    subLabel: "Patrons",
+    subclasses: [
+      { name: "The Fiend", desc: "Your patron is a demon lord or archdevil. In exchange for service and souls, you get fire magic, temporary hit points whenever you kill things, and eventually the ability to shrug off a killing blow. The aggressive warlock option." },
+      { name: "The Great Old One", desc: "Your patron is something that doesn't fit into normal categories. An entity from beyond the planes, ancient and vast. You get telepathy, the ability to detect thoughts, and magic that bends minds and warps reality. The flavor is cosmic horror." },
+      { name: "The Celestial", desc: "Your patron is an angel or celestial being, and the deal was to do good in the world. You can heal, deal radiant damage, and draw on a pool of light magic. The warlock option for players who want the mechanical distinctiveness without the infernal associations." }
+    ]
+  },
+  {
+    name: "Wizard", icon: "📚", tags: ["Scholar","Spellcaster","Prepared","Powerful"], filters: ["caster"],
+    tip: "Enormous versatility, high ceiling, some management required. Best for players who enjoy planning and knowing a lot of options.",
+    lore: [
+      "Wizards learned their magic from books. Decades of study, experimentation, and memorization. The result is access to the widest spell list in the game — more options, more variety, more answers to more situations than any other class. When a wizard says 'I have a spell for this,' they usually mean it.",
+      "The tradeoff is fragility. Wizards are smart and powerful and made of tissue paper. They go down fast when things go wrong, which means positioning, planning, and keeping allies between you and the problem matters.",
+      "Wizards can copy new spells into their spellbooks from scrolls and other wizards' books. This means a wizard who is paying attention is always getting stronger."
+    ],
+    subLabel: "Schools",
+    subclasses: [
+      { name: "School of Evocation", desc: "You specialize in direct, explosive magic. Fireballs, lightning bolts, walls of fire — you make them bigger and you can sculpt them to avoid your allies. The wizard who solves problems by detonating them." },
+      { name: "School of Abjuration", desc: "You specialize in protection. You have a magical ward that absorbs damage, you're excellent at counterspelling enemy magic, and you get steadily harder to hurt. The defensive wizard — durable by wizard standards." },
+      { name: "School of Chronurgy", desc: "You bend time. You can make allies act twice, slow enemies down, force lucky dice rolls to be rerolled, and bend probability in your favor. It doesn't do the most damage but has more control over outcomes than almost anything else." }
+    ]
+  }
+];
+
+const RACES = [
+  {
+    name: "Human", icon: "⚔", tags: ["Adaptable","Ambitious","Skilled","Versatile"], filters: ["classic"],
+    tip: "Works with any class. Great for players who want flexibility without leaning into a specific fantasy.",
+    lore: ["Humans are everywhere. They're curious, stubborn, and bad at knowing when to quit. Give a human a century and they'll build a city, start three wars, found a religion, and write a terrible epic poem about all of it. They don't have elven grace or dwarven toughness. They just refuse to be outworked.", "There's no single thing humans are famous for, which is sort of the point. They fit anywhere. They push into spaces they probably shouldn't. Sometimes that goes badly. Sometimes it changes history.", "If you play a human, you're playing someone ordinary in a world of extraordinary things, and you're going to be fine anyway. Think Aragorn before anyone knew who he was — just a person with a sword and too much to prove."]
+  },
+  {
+    name: "Elf", icon: "🌿", tags: ["Graceful","Perceptive","Ancient","Magical"], filters: ["classic"],
+    tip: "Strong for rangers, wizards, and rogues. Perfect for players who want a touch of mystery and flair.",
+    lore: ["Elves have been around for thousands of years. Not their civilization — them, personally. An old elf has watched kingdoms they knew get buried under new kingdoms, which got buried under yours. They move like they have time to spare, because they do. They notice things. They remember everything.", "They don't sleep. They sit still and revisit their memories like flipping through a very long book. Their senses work better than they should — sharper eyes, sharper ears, a general sense that they're aware of things you aren't.", "Playing an elf means playing someone who's older than they look and knows it. You might be the youngest elf at the table but you're still more ancient than every human in the room. There's something quietly unsettling about someone who finds your whole lifespan a little quaint."]
+  },
+  {
+    name: "Dwarf", icon: "⚒", tags: ["Tough","Loyal","Craftsman","Stubborn"], filters: ["classic"],
+    tip: "Excellent for fighters, clerics, and paladins. Great for players who want durability and a strong cultural identity.",
+    lore: ["Dwarves are short, dense, and built for situations that would wreck anyone else. They come from mountain halls where the stone has names and the ancestors are still a presence at every meal. Grudges get written down. Craft gets taken seriously.", "In a fight, dwarves just don't go down. They shrug off poisons that would floor a human, laugh at conditions other people call 'bad', and keep swinging past the point anyone else would have quit. It's less stubbornness and more that they genuinely don't register pain the way you do.", "A dwarf in your party is the one everyone leans on when things get bad. Gruff about it. Complains constantly. Shows up anyway. There's a version of this character who's funny, a version who's tragic, and a version who's both."]
+  },
+  {
+    name: "Halfling", icon: "🍀", tags: ["Lucky","Nimble","Brave","Cheerful"], filters: ["classic"],
+    tip: "Natural rogues and bards. Perfect for players who enjoy playing the underestimated hero.",
+    lore: ["Halflings are small, cheerful, and suspiciously hard to kill. They'd rather be home with a full pantry and a comfortable chair, but they end up in adventures anyway, usually because something interesting happened and they couldn't quite help themselves.", "The luck thing isn't a metaphor. When a halfling's about to fail catastrophically, reality sort of... reconsiders. It doesn't happen every time, but it happens enough that people notice. Halflings tend to walk out of situations they had no business walking out of.", "The reference point here is Bilbo. Small, unprepared, a little scared, completely impossible to get rid of. Playing one means people underestimate you, which is actually a pretty fun position to be in."]
+  },
+  {
+    name: "Half-Orc", icon: "💀", tags: ["Powerful","Relentless","Intimidating","Loyal"], filters: ["classic"],
+    tip: "Natural barbarians and fighters. Great for players who want raw physical presence and emotional depth.",
+    lore: ["Half-orcs are big, and people notice. They carry orc blood, which means they're built heavier than a human, hit harder, and take hits that would put a normal person in the ground. They've also spent most of their lives being looked at sideways, which does something to a person.", "When they should go down, they don't. There's something in the blood that drags them back from the edge one more time. Doesn't work forever. Works often enough to matter.", "There's a lot of room in this character. Maybe you're angry about how you've been treated. Maybe you've made peace with it. Either way, you're the one people are glad is on their side when it gets ugly."]
+  },
+  {
+    name: "Half-Elf", icon: "✨", tags: ["Charismatic","Versatile","Perceptive","Social"], filters: ["classic"],
+    tip: "Outstanding bards, warlocks, and paladins. Ideal for players who love roleplaying complex social situations.",
+    lore: ["Half-elves got the elven looks and some of the magic, but they also got human restlessness and a lifespan long enough to feel the gap. They don't quite fit with humans, who age around them and eventually die while they're still around. They don't quite fit with elves either, who tend to treat them like a tourist.", "They're good at reading rooms. Good at adjusting. The kind of person who can walk into a tense negotiation and leave with everyone shaking hands, or walk into a rough tavern and leave with the whole place buying them drinks. That's not luck, it's practice.", "Half-elves tend to be interesting because the backstory practically writes itself. Someone who grew up between two worlds usually has opinions about belonging, identity, and what home even means."]
+  },
+  {
+    name: "Dragonborn", icon: "🐉", tags: ["Proud","Powerful","Honor-bound","Draconic"], filters: ["classic"],
+    tip: "Great paladins, fighters, and sorcerers. Best for players who want to feel heroic and larger-than-life.",
+    lore: ["Dragonborn are tall, scaled, and take up space in a room without trying. They're not actually dragons… they're people, with full human-ish lives and feelings and bad days — but they carry dragon blood, and that means something. Their culture treats personal honor and clan reputation like a religion.", "They breathe elemental stuff. Fire, ice, lightning, acid, depends on the lineage. It's not unlimited, but it does mean there's a moment in every fight where a dragonborn does something other people physically cannot do.", "The energy here is knight-who-takes-it-seriously. Dragonborn characters often have something to live up to, or something to live down, and both make for a good story."]
+  },
+  {
+    name: "Tiefling", icon: "🔥", tags: ["Cunning","Resilient","Magical","Outsider"], filters: ["arcane"],
+    tip: "Natural warlocks, sorcerers, and rogues. Perfect for players drawn to an anti-hero or redemption arc.",
+    lore: ["Somewhere in a tiefling's family tree, someone made a deal with a devil. The result doesn't vary — horns, a tail, eyes that glow wrong in the dark, and skin that runs from deep red to bruised purple. People notice when a tiefling walks in. They don't always react well.", "Most tieflings have spent their whole lives deciding who they are in spite of what people assume about them. The infernal stuff is real — there's actual magic in the blood — but it's just power. Power doesn't have alignment. What you do with it does.", "The built-in tension of looking like a villain while trying to be something else is a great foundation for a character. You'll always be doing it from the position of someone who had to work harder to be trusted."]
+  },
+  {
+    name: "Goliath", icon: "🏔", tags: ["Mighty","Stoic","Competitive","Honorable"], filters: ["classic","monstrous"],
+    tip: "Excellent barbarians and fighters. Great for players who want to be the physically dominant presence in the party.",
+    lore: ["Goliaths come from mountain peaks where things either survive or they don't, and nobody is particularly sentimental about which. They're huge, grey-skinned, and covered in stone-pattern markings unique to each person like a fingerprint. Up where they're from, you pull your weight or you don't last the winter.", "They're deeply fair. Goliaths don't bully. They compete, hard, but the competition is supposed to be clean. Cheating to win is considered genuinely shameful in a way that losing isn't.", "Goliaths often end up being the one who does the hard thing without complaining, lifts the thing nobody else can lift, and quietly doesn't understand why people spend so much energy on social nonsense when the problem is right there and solvable."]
+  },
+  {
+    name: "Goblin", icon: "😈", tags: ["Sneaky","Fast","Chaotic","Resourceful"], filters: ["monstrous"],
+    tip: "Natural rogues. Perfect for players who want to have fun, cause mayhem, and surprise everyone.",
+    lore: ["Goblins are small, fast, and absolutely feral in the best way. They live at the bottom of most food chains, which means they've spent generations figuring out how to survive bigger things through speed, nastiness, and not playing by the rules.", "A goblin who decides to go adventuring has usually concluded that the outside world can't possibly be more dangerous than whatever situation they just left. They're probably right. Maybe. The point is they move fast, hit fast, and if something goes wrong they were probably already gone.", "Goblin characters are the chaotic option. Not in a useless way — in a 'why is this working' way. The scariest goblin is the one people stopped taking seriously."]
+  },
+  {
+    name: "Kobold", icon: "🦎", tags: ["Cunning","Adaptive","Pack-minded","Underdog"], filters: ["monstrous"],
+    tip: "Great rogues and artificers. Perfect for players who love puzzles, traps, and inventive problem-solving.",
+    lore: ["Kobolds are tiny, scaly, and utterly devoted to the idea of dragons. They dig elaborate tunnel systems full of traps, work in large groups, and have survived longer than anyone expected by being smarter than they look. Individually, a kobold isn't threatening. A kobold who has had time to prepare is a different story.", "An adventuring kobold has usually either left their pack to pursue something dragon-related, or just left. Finding their own identity after being raised as part of a swarm is a whole journey.", "The fun of playing a kobold is the gap between how you look and what you can actually do. Small and clever beats big and obvious more often than it should."]
+  },
+  {
+    name: "Gnome", icon: "⚙", tags: ["Curious","Inventive","Clever","Magical"], filters: ["classic","arcane"],
+    tip: "Excellent wizards, artificers, and bards. Great for players who love problem-solving and creative solutions.",
+    lore: ["Gnomes think fast, talk fast, and have already had six ideas while you were finishing your sentence. They're naturally magical, naturally nosy, and genuinely delighted by most things they encounter. The world is full of things that work in interesting ways, and gnomes want to understand all of them, ideally by taking them apart.", "There are two main types. Forest gnomes are quieter, talk to animals, and prefer a slow morning over a dramatic entrance. Rock gnomes are tinkerers who treat every piece of machinery as a personal invitation. Both types share the same bottomless need to know how things work.", "Playing a gnome means playing someone who is genuinely excited to be here. That's not naivety — gnomes live long enough to know how things go. They're just enthusiastic anyway."]
+  },
+  {
+    name: "Genasi", icon: "🌊", tags: ["Elemental","Magical","Unique","Otherworldly"], filters: ["arcane"],
+    tip: "Great sorcerers, druids, and monks. Best for players who want a distinct supernatural identity tied to nature.",
+    lore: ["Genasi have a genie somewhere in their bloodline, and it shows. Fire genasi might have warm skin that smolders at the edges, eyes like lit coals, a permanent heat haze around them. Water genasi have a bluish tint and move strangely, like they're still adjusting to not being liquid. Earth genasi feel permanent. Air genasi feel like they might drift off.", "Each subtype comes with different elemental magic and a different way of experiencing the world. A fire genasi isn't just 'a person who likes fire' — the element is part of them, in a way that most people can't quite understand.", "Genasi are fun to play because you're visibly not fully human, and your relationship with your element gives you a built-in personality hook."]
+  },
+  {
+    name: "Aasimar", icon: "☀", tags: ["Radiant","Chosen","Blessed","Conflicted"], filters: ["arcane"],
+    tip: "Natural paladins and clerics. Perfect for players drawn to themes of destiny, divine purpose, and moral complexity.",
+    lore: ["Aasimar have celestial blood. An angel touched their lineage at some point, and the mark carried forward — a quiet glow to the skin, an unusual beauty, sometimes wings or radiant fire when things get serious. Many of them hear a voice in their dreams. A guardian. It doesn't bark orders, it just... nudges.", "Being told you're touched by divinity sounds great until you realize what it actually means: everyone expects more from you. Every time you fail, it lands heavier. Some aasimar spend their whole lives trying to live up to what they're supposed to be. Others decide they'd rather just be a person.", "There's also a darker version — the fallen aasimar, who turned away from the light entirely and ended up somewhere complicated. Both versions are interesting."]
+  },
+  {
+    name: "Tabaxi", icon: "🐈", tags: ["Agile","Curious","Quick","Wanderer"], filters: ["beastfolk"],
+    tip: "Excellent rogues, bards, and rangers. Great for players who love mobility, exploration, and personality-driven roleplay.",
+    lore: ["Tabaxi are cat-people, which is exactly as good as it sounds. Feline features, feline reflexes, feline attention span. They're fast, agile, and get genuinely distracted by shiny things — not in a helpless way, more like their curiosity is just physically stronger than their willpower for a second. They travel the world collecting stories more than treasure.", "Most tabaxi left their home with a specific fixation, some artifact, legend, or mystery they need to track down. When they find it, they might immediately fixate on something else. The journey is the point. Being still feels wrong.", "Tabaxi are great fun at a table because they bring energy. They're up on the roof before anyone suggested climbing. They make things happen not through brute force but through sheer momentum."]
+  },
+  {
+    name: "Tortle", icon: "🐢", tags: ["Calm","Tough","Philosophical","Steady"], filters: ["beastfolk"],
+    tip: "Great monks, druids, and fighters. Perfect for players who want a peaceful but deeply capable character.",
+    lore: ["Tortles carry their home on their back, literally, and this has done something interesting to how they see the world. They don't worry about where they'll sleep. They don't get attached to buildings. They can pull into their shell if things get bad, and they have a natural armor that makes wearing metal largely unnecessary.", "They're slow but not simple. Tortles tend to think before they speak, act without drama, and approach problems with a patience that can read as either wisdom or stubbornness depending on the problem.", "Playing a tortle means playing someone who is genuinely hard to rattle. Not unfeeling, just settled. In a party full of anxious, driven adventurers, that energy is useful."]
+  },
+  {
+    name: "Minotaur", icon: "🐂", tags: ["Powerful","Honorable","Fierce","Determined"], filters: ["monstrous"],
+    tip: "Excellent fighters, barbarians, and paladins. Great for players who want sheer physical dominance and thematic depth.",
+    lore: ["Minotaurs are big, bull-headed, and aware that the mythology around their kind is not flattering. The labyrinth, the monster, the eating of people… that story gets around. Most minotaurs have an opinion about it. Some are tired of correcting people. Some have decided to use the fear.", "They're strong enough to throw things that probably shouldn't be thrown, and when they charge, they have actual horns to make that count. They can also navigate instinctively — mazes, dungeons, strange geometry — minotaurs just know where they are.", "There's real story potential in being the creature from the myth who has to decide what that means for them personally."]
+  },
+  {
+    name: "Kenku", icon: "🐦", tags: ["Mimicry","Stealthy","Observant","Unique"], filters: ["beastfolk"],
+    tip: "Natural rogues and monks. Best for players who love a communication challenge and want a truly unique roleplay experience.",
+    lore: ["Kenku are crow-people under a curse: they cannot create. No original words. No new sounds. Everything they say is stolen from somewhere else — a phrase they overheard in a market, a sound they recorded in their memory, the exact laugh of someone they met three years ago. Talking to a kenku is like listening to a collage.", "This sounds limiting, and it is, but kenku are also eerily precise about everything they observe. They notice things. They remember things. They can mimic a voice so perfectly it fools the person being mimicked.", "Playing a kenku is the most creative roleplay challenge on this list. You have to build communication out of things your character has actually heard. It's a puzzle, and when you pull it off it's genuinely memorable."]
+  }
+];
+
+function buildCards(data, gridId, typeLabel) {
+  const grid = document.getElementById(gridId);
+  data.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.filters = item.filters.join(' ');
+    card.style.animationDelay = (i * 0.04) + 's';
+
+    const desc = item.lore[0];
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-icon">${item.icon}</div>
+        <div class="card-title-block">
+          <div class="card-name">${item.name}</div>
+          <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">${desc}</p>
+        <div class="card-tip"><strong>✦ Tip</strong>${item.tip}</div>
+      </div>
+      <div class="card-footer">
+        <button class="card-expand-btn">View Full Entry &nbsp;›</button>
+      </div>
+    `;
+
+    card.querySelector('.card-expand-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openModal(item, typeLabel);
+    });
+    card.addEventListener('click', () => openModal(item, typeLabel));
+    grid.appendChild(card);
+  });
+}
+
+function openModal(item, typeLabel) {
+  document.getElementById('modal-type').textContent = typeLabel;
+  document.getElementById('modal-name').textContent = item.name;
+  document.getElementById('modal-tags').innerHTML = item.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
+  document.getElementById('modal-tip').textContent = item.tip;
+  document.getElementById('modal-lore').innerHTML = item.lore.map(p => `<p>${p}</p>`).join('');
+
+  const subSection = document.getElementById('modal-subclasses-section');
+  if (item.subclasses && item.subclasses.length) {
+    subSection.style.display = 'block';
+    document.getElementById('modal-sub-label').textContent = item.subLabel || 'Subclasses';
+    document.getElementById('modal-subclasses').innerHTML = item.subclasses.map(s =>
+      `<div class="subclass-item"><div class="subclass-name">${s.name}</div><div class="subclass-desc">${s.desc}</div></div>`
+    ).join('');
+  } else {
+    subSection.style.display = 'none';
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Filters
+function setupFilters(sectionId, gridId) {
+  const section = document.getElementById(sectionId);
+  section.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      section.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.getElementById(gridId).querySelectorAll('.card').forEach(card => {
+        if (filter === 'all' || card.dataset.filters.includes(filter)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+}
+
+buildCards(CLASSES, 'class-grid', 'Class');
+buildCards(RACES, 'race-grid', 'Lineage');
+</script>
+</body>
+</html>
